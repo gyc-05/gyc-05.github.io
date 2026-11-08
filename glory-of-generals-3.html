@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Gycccc 的将军的荣耀3手游策划案：战斗规则、兵种数值、将领成长、资源经济、商业化与美术需求，附完整修订版下载。">
+  <meta name="theme-color" content="#fafaf8"><title>将军的荣耀3 · 完整手游策划案 | Gycccc</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><script src="main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳转到正文</a>
+<header class="header wrap"><a class="brand" href="./" aria-label="Gycccc 作品集首页"><span>Gycccc<span class="brand-sub">PERSONAL PORTFOLIO</span></span></a><button class="menu-toggle" aria-expanded="false" aria-controls="navigation">菜单 <span>＋</span></button><nav id="navigation" aria-label="主导航"><a href="index.html#work">精选作品</a><a href="index.html#approach">策划思路</a><a href="index.html#about">关于</a><a class="nav-action" href="assets/glory-of-generals-3-design.docx" download>下载策划案 <span>↓</span></a></nav></header>
+<main id="main">
+  <section class="case-hero wrap">
+    <a class="back-link" href="index.html#work">← 返回精选作品</a>
+    <p class="eyebrow">CASE STUDY 002 / TACTICAL STRATEGY</p>
+    <h1>将军的荣耀3<br>完整手游策划与系统设计</h1>
+    <p class="case-intro">从一次战场部署，到一条长期成长路线。围绕战役、兵种、将领和资源经济，整理可解释的数值关系，提出体验与商业化方案。</p>
+    <div class="case-meta"><span>项目类型 / 独立策划 · 非官方</span><span>文档时间 / 2026年10月</span><span>内容版本 / 完整策划案修订版</span></div>
+  </section>
+  <div class="wrap case-body">
+    <aside class="case-toc" aria-label="项目目录"><span>ON THIS PAGE</span><a href="#overview">01 项目概览</a><a href="#loop">02 系统与循环</a><a href="#combat">03 战斗与数值</a><a href="#growth">04 编组与成长</a><a href="#economy">05 经济与商业化</a><a href="#delivery">06 交互与验收</a><a href="#download">07 完整文档</a></aside>
+    <article class="case-content">
+      <section id="overview"><h2>01 项目概览</h2>
+        <p>这份策划案以二战题材回合制战棋为研究对象，把战役推进作为长期目标，把部署、兵种搭配、地形利用与士气管理作为战场上的主要决策。设计范围覆盖战斗、成长、资源经济、内容节奏、交互、商业化及美术交付。</p>
+        <p><strong>设计重点：</strong>让玩家看懂单位差异，让成长投入对应具体战术用途，让失败之后仍有复盘、调整和再次尝试的路径。</p>
+        <p class="note">本页摘编自《将军的荣耀3 完整策划案 修订版》。原案以 Windows 版 1.8.1.0 配置作为数值参照；这里保留原案口径，未重新开展手机端实测。项目不代表参与原作开发，也不将提案和指标假设表述为已实现成果。</p>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="资料状态说明表，可横向滚动"><table><thead><tr><th scope="col">原案标记</th><th scope="col">含义与使用边界</th></tr></thead><tbody><tr><td>实装基线</td><td>原案标注为已核对的 Windows 1.8.1.0 配置字段；不直接等于手机端最终面板或战斗伤害。</td></tr><tr><td>本案新增方案</td><td>系统流程、平衡约束、价格测试带与指标目标，供评审和实验使用。</td></tr><tr><td>待实机验证</td><td>伤害结算顺序、手机端展示、渠道商品与运营表现，需要目标版本及实测数据确认。</td></tr></tbody></table></div>
+      </section>
+      <section id="loop"><h2>02 系统与循环</h2>
+        <p class="flow">选择战役 → 战前编组 → 战场决策 → 战斗评价 → 资源与成长 → 新的战役目标</p>
+        <p>战役和挑战提供目标，将领、兵种、编制与科技构成战前选择；战斗结果转化为资源和成长，再支持更高难度或新的历史内容。商城和活动入口应放在大厅、结果页及内容详情中，避免打断战斗指令。</p>
+        <h3>逐步开放规则，而不是一次展示全部系统</h3>
+        <p>原案建议首战聚焦移动、攻击和占点；首战后解释损失与战果；首章中段引入升级、编组和科技预览；首章完成后再扩展挑战、收藏与可选首购。每一步都应让玩家理解新功能的用途。</p>
+        <h3>让复玩来自新的问题</h3>
+        <p>内容方案将历史战役、挑战关、征服模式和限时战役分层。不同内容通过规则、目标和开局条件改变编组选择，而非仅重复提高敌方数值。具体开放节奏与奖励仍需在目标版本验证。</p>
+      </section>
+      <section id="combat"><h2>03 战斗与数值</h2>
+        <p>原案围绕生命、攻击区间、防御、行动、视野、射程、编制和成本建立数值输入表。下表摘录六类陆军的配置基线，保留原字段值与版本范围。</p>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="陆军单位配置基线，可横向滚动"><table><thead><tr><th scope="col">兵种</th><th scope="col">HP</th><th scope="col">攻击区间</th><th scope="col">射程</th><th scope="col">最大编制</th></tr></thead><tbody><tr><td>步兵</td><td>80</td><td>20-25</td><td>1-1</td><td>3</td></tr>
+<tr><td>装甲车</td><td>100</td><td>25-30</td><td>1-1</td><td>2</td></tr>
+<tr><td>火炮</td><td>80</td><td>20-45</td><td>1-2</td><td>2</td></tr>
+<tr><td>坦克</td><td>160</td><td>25-40</td><td>1-1</td><td>2</td></tr>
+<tr><td>重火炮</td><td>90</td><td>20-55</td><td>2-3</td><td>2</td></tr>
+<tr><td>重坦克</td><td>180</td><td>30-45</td><td>1-2</td><td>1</td></tr></tbody></table></div>
+        <p class="note">数据来源：原案表3-3，Windows 版 1.8.1.0。上述攻击字段不是最终伤害，未包含将领、等级、敌方防御、地形、随机抽样及取整影响。</p>
+        <h3>编制体现生存与输出的不同收益</h3>
+        <p>按原案配置，1、2、3编制的攻击倍率为100%、125%、140%，HP倍率为100%、200%、300%。以步兵为例，三编制的名义换算为240 HP、28–35攻击。这仅是配置倍率换算，不是完整战斗结算。</p>
+        <p><strong>设计判断：</strong>扩编主要增加耐久和持续作战能力，输出增长相对较缓。原案建议通过编制上限、补充成本和损失风险保留多种可行方案，避免高编制成为无条件最优。</p>
+        <h3>把伤害结果解释给玩家</h3>
+        <p>原案提出在攻击确认前显示预计损失与关键影响项，并为联调提供分项日志，记录攻击原值、等级、士气、国家修正、编制、地形、防御和取整步骤。新增模式的公式仅作为测试提案，不替代对现有结算机制的验证。</p>
+      </section>
+      <section id="growth"><h2>04 编组与成长</h2>
+        <h3>兵种和将领通过分工形成组合</h3>
+        <p>方案将步兵、装甲、炮兵、海空和后勤指挥分别对应占点、防线突破、远程支援、水域控制及恢复补给。能力预算应围绕角色制定，避免用单一攻击数值排列全部将领。</p>
+        <h3>让每一笔成长投入都可解释</h3>
+        <p>升级界面应区分基础值、等级增量、本次成本和升级后的结果；科技界面展示实际效果与来源。原案中特种部队的定位是强化特定战术窗口，而非同时在生命、攻击、防御、机动与射程上全面领先。</p>
+        <h3>战前选择与战后复盘相连</h3>
+        <p>新增编组方案包含两套免费预设、关卡目标与射程压力提示，以及选择阶段可见的数量和资源限制。失败后提供复盘、调整编组与重试入口，避免以购买恢复道具作为继续尝试的前提。</p>
+      </section>
+      <section id="economy"><h2>05 经济与商业化</h2>
+        <p><strong>原案原则：</strong>付费提供内容、收藏、不同解法或便利服务，不把常规战役的胜负结果直接商品化。</p>
+        <p>资源说明应回答四个问题：从哪里获得、花在哪里、下一个目标需要多少、能否通过免费玩法获得。原案列出基础货币、通用勋章及不同徽章的用途与潜在瓶颈，并建议将恢复成本与恢复效果一起展示。</p>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="商业化方案与约束，可横向滚动"><table><thead><tr><th scope="col">方案类别</th><th scope="col">玩家价值</th><th scope="col">设计约束</th></tr></thead><tbody><tr><td>战役扩展</td><td>新章节、主题关卡与历史收藏</td><td>不以可选商品阻断常规主线。</td></tr><tr><td>将领与特种部队</td><td>主题收藏与不同战术选择</td><td>先试用，常规模式保留免费替代解法。</td></tr><tr><td>外观与收藏</td><td>旗帜、单位涂装和纪念内容</td><td>外观不改变战斗数值。</td></tr><tr><td>持续补给与奖励视频</td><td>日常补给和非关键材料</td><td>领取规则清楚，视频自愿且不在战斗中插播。</td></tr></tbody></table></div>
+        <p>首购触达建议放在首章完成或首次达成三星之后，先通过试用和清单说明价值；拒绝后不反复弹出同一商品。原案中的价格测试带和留存目标均为假设，不代表实际售价、转化率或收入成果。</p>
+      </section>
+      <section id="delivery"><h2>06 交互与验收</h2>
+        <h3>交互与美术围绕信息可读性</h3>
+        <p>战场遵循选择、预览、确认的指令流程，明确射程、移动范围、士气和目标状态。美术需求覆盖地图、单位、ICON、界面、动效和音频；以轮廓和图标补充颜色编码，并提供窄屏与错误状态，降低误读和误触。</p>
+        <h3>记录可复现的数据</h3>
+        <p>埋点方案覆盖新手步骤、战斗行为、士气变化、资源产耗、编组变化和购买流程。原案要求将战斗日志与固定随机种子结合，检查相同输入能否得到一致结果，定位单位单一最优解和资源瓶颈。</p>
+        <h3>上线前的关键验证</h3>
+        <ul><li>核对目标手机端的单位面板、射程、编制、科技与恢复效果。</li><li>按原案建议记录至少200场固定随机种子的战斗，覆盖地形、士气、国家、将领和兵种组合；这是待执行测试要求。</li><li>用免费阵容和不同编组回归常规战役，检查失败原因能否解释。</li><li>验证断线恢复、重复支付回调、恢复购买与资源到账的一致性。</li><li>按渠道、设备和来源分层采集新手与留存数据，再校准方案；商业化实验同时观察留存与退款。</li></ul>
+        <p class="note">验收清单用于说明后续验证工作，不表示上述测试已经完成。</p>
+      </section>
+      <section id="download"><h2>07 完整文档</h2>
+        <div class="download-box"><p>下载原始修订版 Word 文档，查看4章主体内容、33张表格，以及完整的兵种数据、流程图、美术需求和附录验证清单。</p><div class="case-actions"><a class="button" href="assets/glory-of-generals-3-design.docx" download="将军的荣耀3_完整策划案_修订版.docx">下载 Word 文档 <span>↓</span></a><button class="copy-button" data-copy-link>复制项目链接</button></div><div class="status" role="status" aria-live="polite"></div></div>
+        <p>内容来源：《将军的荣耀3 完整策划案 修订版》，文档标注 V1.0，编写日期为2026年10月。本页是原案的展示摘要，详细字段、限制条件和完整提案以下载文档为准。</p>
+        <p>游戏名称及相关商标归其各自权利人所有，本项目为独立研究与策划展示，与原作开发商及发行商无隶属关系。</p>
+        <a class="text-link" href="civilization-vi.html">阅读另一个项目：文明6 <span>→</span></a>
+      </section>
+    </article>
+  </div>
+</main>
+<footer class="wrap footer"><a class="brand footer-brand" href="./" aria-label="Gycccc 作品集首页">Gycccc</a><p><a href="https://github.com/gyc-05/gyc-05.github.io" aria-label="查看 Gycccc 的网站 GitHub 仓库">GitHub ↗</a></p><a href="#main">回到顶部 ↑</a></footer>
+</body></html>
