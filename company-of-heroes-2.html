@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="英雄连2数值拆解：五阵营步兵、命中与掩体、装甲穿透、坦克对射演算及平衡验证，附完整Word文档。"><meta name="theme-color" content="#fafaf8"><title>英雄连2 · 数值拆解案 | Gycccc</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><script src="main.js" defer></script><style>.coh2-case td{overflow-wrap:anywhere}.coh2-case p{overflow-wrap:anywhere}.coh2-case .case-toc{gap:9px}.coh2-case .case-toc a{line-height:1.6}</style></head><body class="coh2-case">
+<a class="skip" href="#main">跳转到正文</a>
+<header class="header wrap"><a class="brand" href="./" aria-label="Gycccc 作品集首页"><span>Gycccc<span class="brand-sub">PERSONAL PORTFOLIO</span></span></a><button class="menu-toggle" aria-expanded="false" aria-controls="navigation">菜单 <span>＋</span></button><nav id="navigation" aria-label="主导航"><a href="index.html#work">精选作品</a><a href="index.html#approach">策划思路</a><a href="index.html#about">关于</a><a class="nav-action" href="assets/company-of-heroes-2-breakdown.docx" download>下载策划案 <span>↓</span></a></nav></header>
+<main id="main"><section class="case-hero wrap"><a class="back-link" href="index.html#work">← 返回精选作品</a><p class="eyebrow">CASE STUDY 004 / COMBAT SYSTEMS</p><h1>英雄连2<br>数值拆解案</h1><p class="case-intro">从一发子弹到一次交火，拆解命中、掩体、穿甲与减员的关系，解释战场操作如何改变数值收益。</p><div class="case-meta"><span>项目类型 / 独立研究 · 非官方</span><span>数据基线 / 4.0.0.24250</span><span>整理时间 / 2026年11月11日</span></div><div class="case-actions" style="margin-top:24px"><a class="button" href="#chapter-06">阅读坦克对射演算 <span>↓</span></a><a class="text-link" href="#download">下载完整文档 <span>↓</span></a></div></section><div class="wrap case-body"><aside class="case-toc" aria-label="项目目录"><span>ON THIS PAGE</span><a href="#overview">项目概览与阅读说明</a><a href="#chapter-01">01 数据结构与分析口径</a><a href="#chapter-02">02 步兵基础数值与生存模型</a><a href="#chapter-03">03 距离命中与掩体收益</a><a href="#chapter-04">04 射击节奏与减员反馈</a><a href="#chapter-05">05 装甲生存与主炮参数</a><a href="#chapter-06">06 谢尔曼与四号的对射演算</a><a href="#chapter-07">07 射程穿深与收益饱和</a><a href="#chapter-08">08 范围伤害与特殊机制</a><a href="#chapter-09">09 资源投入与时间经济</a><a href="#chapter-10">10 老练成长与平衡设计</a><a href="#chapter-11">11 验证矩阵与验收方法</a><a href="#chapter-12">12 来源与复算附录</a><a href="#download">完整文档下载</a></aside><article class="case-content"><section id="overview">
+<h2>阅读目的与核心结论</h2>
+<p>本案面向游戏系统策划与战斗数值策划，以可核验的公开字段解释《英雄连2》的战斗结果。研究重点是步兵命中与减员、掩体收益、装甲穿透、射击周期，以及资源投入如何转化为地图控制。它是一份已有游戏的数值拆解，不是官方设计文档，也不是当前版本全兵种强度榜。</p>
+<p>《英雄连2》的核心数值特点是情境依赖。同一武器的有效输出会随距离、目标体积、掩体、移动和装甲朝向变化；同一小队的火力会随成员死亡持续下降。因此，面板伤害、整队总血量或单位价格，都不足以单独解释胜负。</p>
+<p>本案采用三种证据标记。【原值】为公开数据库字段；【演算】为在明确条件下计算的结果；【建议】为策划分析或待验证方案。所有时间估算均说明是否忽略动画、散布碰撞和战场干扰。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="项目概览与阅读说明数据表，可横向滚动"><table><thead><tr>
+<th scope="col">项目</th>
+<th scope="col">范围</th>
+</tr></thead><tbody>
+<tr><td>研究样本</td><td>五阵营基础步兵；谢尔曼、东德四号、东德豹式、T-34/76、SU-85</td></tr>
+<tr><td>数据来源</td><td>Serealia CoH2 Stats 与其更新日志；检索日期为2026年11月11日</td></tr>
+<tr><td>版本边界</td><td>更新日志声明主数据基于4.0.0.24250；不能据此声称是2026年最新平衡</td></tr>
+<tr><td>未覆盖</td><td>全指挥官技能、全单位价格、完整老练矩阵、战役脚本、地图专属规则</td></tr>
+<tr><td>实测边界</td><td>未运行本地游戏对战；命中率与时间结果为模型计算，并非对战统计</td></tr>
+</tbody></table></div>
+<h2>内容导航</h2>
+<p>01 数据结构与分析口径　02 步兵基础数值　03 命中与掩体　04 射击周期与减员</p>
+<p>05 装甲与主炮　06 中型坦克对射　07 射程与穿深边际收益　08 范围伤害与特殊机制</p>
+<p>09 资源与时间经济　10 成长与平衡调整　11 验证方案　12 来源与复算附录</p>
+</section><section id="chapter-01">
+<h2>01 数据结构与分析口径</h2>
+<h3>从单位到战斗结果</h3>
+<p>分析单位时，应先区分小队、实体、武器和状态。小队负责编制与人口等组织信息；实体提供生命、体积与装甲；武器提供伤害、精度、穿深及射击节奏；状态改变掩体、移动、老练或技能修正。把这些层的数据直接相加，容易重复计算升级武器或重复应用老练加成。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="01 数据结构与分析口径数据表，可横向滚动"><table><thead><tr>
+<th scope="col">数据层</th>
+<th scope="col">典型字段</th>
+<th scope="col">分析用途</th>
+</tr></thead><tbody>
+<tr><td>小队</td><td>编制、人口、可用武器与升级</td><td>确定实际参战配置</td></tr>
+<tr><td>实体</td><td>生命、目标体积、正背甲、速度</td><td>确定存活与被命中条件</td></tr>
+<tr><td>武器</td><td>伤害、精度、距离节点、穿深</td><td>计算单发有效伤害</td></tr>
+<tr><td>时间</td><td>瞄准、冷却、装填、连射、前后摇</td><td>计算初次开火与持续输出</td></tr>
+<tr><td>状态</td><td>移动、掩体、老练、技能</td><td>构造具体战斗场景</td></tr>
+</tbody></table></div>
+<h3>统一比较条件</h3>
+<p>除另行说明，采用无老练、无额外技能、满编、默认武器。步兵模型按单个成员计算，再讨论整队；坦克采用指定朝向装甲。移动精度乘数属于射手，目标体积属于受击者，掩体修正属于当前攻击关系。</p>
+<p><strong>【原值】</strong>数据库单位列表同时包含基础、升级和特殊武器。步枪兵的默认配置取5支M1加兰德，而不把列表中的火箭筒等可选项加入默认输出。英军步兵班同理，仅选4支李恩菲尔德作为本案基线。</p>
+<p><strong>【限制】</strong>部分武器的距离节点在原始数据中用−1表示默认值。四号主炮的网页解析结果明确显示0／20／40；其他未核验的哨兵值不直接插值。本案坦克比较主要使用已命名的近中远节点，避免把不同射程的“远距”误当成同一物理距离。</p>
+<h3>核心计算关系</h3>
+<p>精度通道命中概率 p命中 = min(1, max(0, 武器精度 × 目标体积 × 精度修正))。</p>
+<p>穿透概率 p穿透 = min(1, 穿深 ÷ 当前受击面装甲)，适用于本案正装甲样本。</p>
+<p>单发期望直接伤害 E伤害 = p命中 × p穿透 × 单发伤害 × 伤害修正。</p>
+<p><strong>【限制】</strong>坦克炮弹散布后的实体碰撞可能产生额外命中；爆炸也可能造成间接伤害。因此上述关系只覆盖精度判定通道，不能当作完整引擎命中率。</p>
+</section><section id="chapter-02">
+<h2>02 步兵基础数值与生存模型</h2>
+<h3>五阵营基础步兵样本</h3>
+<p><strong>【原值】</strong>下表为本案选定的基础编制。目标体积小于1表示更难被小武器精度判定命中，不代表直接减伤。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="02 步兵基础数值与生存模型数据表，可横向滚动"><table><thead><tr>
+<th scope="col">单位</th>
+<th scope="col">人数</th>
+<th scope="col">单人生命</th>
+<th scope="col">目标体积</th>
+<th scope="col">默认步枪伤害</th>
+</tr></thead><tbody>
+<tr><td>美军步枪兵</td><td>5</td><td>80</td><td>0.97</td><td>8</td></tr>
+<tr><td>东德掷弹兵</td><td>4</td><td>80</td><td>0.91</td><td>16</td></tr>
+<tr><td>苏军动员兵</td><td>6</td><td>80</td><td>1.087</td><td>12</td></tr>
+<tr><td>西德国民掷弹兵</td><td>5</td><td>80</td><td>1.00</td><td>12</td></tr>
+<tr><td>英军步兵班</td><td>4</td><td>80</td><td>0.85</td><td>14</td></tr>
+</tbody></table></div>
+<p><strong>【演算】</strong>基础总生命分别为400、320、480、400、320，但这些生命分布在独立成员上，并非共享血池。四人队遭遇一次多目标爆炸时，可能比总血量相近的分散队形更容易整队损失；单看480与320无法推出动员兵一定更耐打。</p>
+<h3>有效生命的使用边界</h3>
+<p>在命中未封顶、武器固定、无装甲差异的简化条件下，可用“生命÷目标体积”比较单个模型对精度型小武器的相对生存性。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="02 步兵基础数值与生存模型数据表，可横向滚动"><table><thead><tr>
+<th scope="col">单位</th>
+<th scope="col">80÷目标体积</th>
+<th scope="col">相对体积1模型</th>
+</tr></thead><tbody>
+<tr><td>步枪兵</td><td>82.47</td><td>约提升3.09%</td></tr>
+<tr><td>掷弹兵</td><td>87.91</td><td>约提升9.89%</td></tr>
+<tr><td>动员兵</td><td>73.60</td><td>约降低8.00%</td></tr>
+<tr><td>国民掷弹兵</td><td>80.00</td><td>基准</td></tr>
+<tr><td>英军步兵班</td><td>94.12</td><td>约提升17.65%</td></tr>
+</tbody></table></div>
+<p>这些结果是命中概率意义上的代理指标，不适用于必中、范围伤害或命中率已经封顶的攻击，也未包含英军的状态依赖效果。</p>
+<h3>伤害阈值</h3>
+<p>80生命目标在无减伤且每发命中的条件下，8伤害需要10发，12伤害需要7发，14伤害需要6发，16伤害需要5发。最后一发的溢出伤害不会自动转移给下一名成员。设计时应同时检查每发伤害与击杀所需命中数，不能只检查连续DPS。</p>
+</section><section id="chapter-03">
+<h2>03 距离命中与掩体收益</h2>
+<h3>步枪精度节点</h3>
+<p><strong>【原值】</strong>精度是与目标体积相乘之前的武器值。百分比仅为显示形式。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="03 距离命中与掩体收益数据表，可横向滚动"><table><thead><tr>
+<th scope="col">默认步枪</th>
+<th scope="col">近距精度</th>
+<th scope="col">中距精度</th>
+<th scope="col">远距精度</th>
+<th scope="col">节点距离</th>
+</tr></thead><tbody>
+<tr><td>M1加兰德</td><td>71.30%</td><td>66.70%</td><td>51.75%</td><td>6／16／35</td></tr>
+<tr><td>掷弹兵Kar98k</td><td>74.80%</td><td>66.10%</td><td>59.80%</td><td>0／25／35</td></tr>
+<tr><td>动员兵莫辛纳甘</td><td>75.72%</td><td>65.99%</td><td>55.65%</td><td>0／25／35</td></tr>
+<tr><td>国民掷弹兵Kar98k</td><td>74.80%</td><td>71.30%</td><td>67.90%</td><td>0／25／35</td></tr>
+<tr><td>李恩菲尔德</td><td>67.60%</td><td>63.70%</td><td>59.80%</td><td>0／25／35</td></tr>
+</tbody></table></div>
+<p>相同名称的武器不保证相同配置。国民掷弹兵远距精度高于掷弹兵，但其每发伤害较低；再考虑冷却与瞄准，不能由精度排名推出整队DPS排名。</p>
+<h3>掩体的乘法效应</h3>
+<p><strong>【原值】</strong>以M1加兰德的cover_table为例。这里是该武器的修正，不是所有攻击类型通用规则。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="03 距离命中与掩体收益数据表，可横向滚动"><table><thead><tr>
+<th scope="col">受击环境</th>
+<th scope="col">精度乘数</th>
+<th scope="col">伤害乘数</th>
+<th scope="col">单发期望相对露天</th>
+</tr></thead><tbody>
+<tr><td>露天</td><td>1</td><td>1</td><td>100%</td></tr>
+<tr><td>轻掩体</td><td>0.5</td><td>1</td><td>50%</td></tr>
+<tr><td>重掩体</td><td>0.5</td><td>0.5</td><td>25%</td></tr>
+<tr><td>建筑驻军</td><td>0.55</td><td>0.5</td><td>27.5%</td></tr>
+<tr><td>负掩体</td><td>1.25</td><td>1.25</td><td>156.25%</td></tr>
+</tbody></table></div>
+<p><strong>【演算】</strong>35距离处，加兰德攻击体积0.91的掷弹兵：露天命中率为0.5175×0.91＝47.0925%；单发期望伤害为3.7674。有效重掩体下命中率为23.54625%，命中伤害为4，单发期望伤害降为0.94185。</p>
+<p><strong>【结论】</strong>在这一受控条件中，重掩体将期望伤害降至四分之一。绕侧使掩体失效，能够产生比小幅提升武器属性更大的收益。</p>
+<p><strong>【限制】</strong>掩体有方向与距离等适用条件，建筑和特殊武器另有规则；不能把“重掩体四倍生存”推广到所有近距离交火、手雷、火焰或炮击。负掩体156.25%的结果也要求命中未被上限截断。</p>
+</section><section id="chapter-04">
+<h2>04 射击节奏与减员反馈</h2>
+<h3>为什么伤害乘精度还不是DPS</h3>
+<p>完整持续输出还取决于瞄准、冷却、装填频率、连射时长与动画时序。不同字段可能按引擎规则衔接或重叠，必须以数据库算法或受控实测核验，不能机械相加所有时间。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="04 射击节奏与减员反馈数据表，可横向滚动"><table><thead><tr>
+<th scope="col">武器</th>
+<th scope="col">每发伤害</th>
+<th scope="col">装填时长</th>
+<th scope="col">移动精度乘数</th>
+<th scope="col">移动冷却乘数</th>
+</tr></thead><tbody>
+<tr><td>M1加兰德</td><td>8</td><td>2.1至2.8秒</td><td>0.6</td><td>1.25</td></tr>
+<tr><td>掷弹兵Kar98k</td><td>16</td><td>1.5至2.6秒</td><td>0.5</td><td>1.5</td></tr>
+<tr><td>莫辛纳甘</td><td>12</td><td>2.4至3.4秒</td><td>0.5</td><td>1.5</td></tr>
+<tr><td>国民掷弹兵Kar98k</td><td>12</td><td>1.5至2.6秒</td><td>0.5</td><td>1.5</td></tr>
+<tr><td>李恩菲尔德</td><td>14</td><td>1.25秒</td><td>0.5</td><td>1.5</td></tr>
+</tbody></table></div>
+<p><strong>【原值】</strong>上述装填时间是一次装填行为的时长，不是每发间隔。加兰德冷却基础区间为0.5至1秒，近中远乘数为0.5／0.75／1.25；其射击瞄准还有独立距离修正，不能只按装填时间算射速。</p>
+<p><strong>【演算】</strong>如果仅把精度与冷却视为影响项，加兰德移动输出代理比为0.6÷1.25＝48%；其他样本为0.5÷1.5＝33.33%。这只是冷却主导假设下的代理值，并非真实移动DPS。它提示加兰德在移动交火中可能保留更高比例的火力，需要进一步实测。</p>
+<h3>减员形成正反馈</h3>
+<p>五名成员各持一支相同武器且射界一致时，首名成员死亡后瞬时火力由5份降为4份，损失20%；四人队同样损失一人则下降25%。因此先造成减员的一方不仅获得生命优势，也降低了后续承伤。</p>
+<p>更完整的交战模型应在每次死亡后更新存活人数、武器持有人、目标选择和下一发时间。班用机枪、拾取武器与成员转移会改变“少一人少一份等额火力”的假设。</p>
+<h3>初始齐射与持续输出应分开记录</h3>
+<p><strong>【建议】</strong>数值表分别列出首次开火延迟、前3秒伤害、前10秒伤害与长期平均DPS。短暂遭遇可能由齐射阈值决定，固定掩体对射更依赖持续输出；用单个DPS字段会掩盖两种不同优势。</p>
+</section><section id="chapter-05">
+<h2>05 装甲生存与主炮参数</h2>
+<h3>代表性装甲单位</h3>
+<p><strong>【原值】</strong>四号与豹式均选东德版本，不混入西德同名单位。速度为数据库移动参数，不换算为现实公里每小时。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="05 装甲生存与主炮参数数据表，可横向滚动"><table><thead><tr>
+<th scope="col">单位</th>
+<th scope="col">生命</th>
+<th scope="col">正甲／背甲</th>
+<th scope="col">目标体积</th>
+<th scope="col">速度</th>
+<th scope="col">人口</th>
+</tr></thead><tbody>
+<tr><td>M4A3谢尔曼</td><td>640</td><td>160／80</td><td>21</td><td>6.4</td><td>12</td></tr>
+<tr><td>东德四号</td><td>640</td><td>180／90</td><td>20</td><td>6.3</td><td>12</td></tr>
+<tr><td>东德豹式</td><td>960</td><td>260／90</td><td>24</td><td>6.6</td><td>18</td></tr>
+<tr><td>T-34/76</td><td>640</td><td>150／75</td><td>20</td><td>6.5</td><td>10</td></tr>
+<tr><td>SU-85</td><td>640</td><td>140／70</td><td>18</td><td>5.7</td><td>15</td></tr>
+</tbody></table></div>
+<p>装甲减少的是成功穿透的概率；生命决定需要承受多少次有效伤害；体积影响精度通道命中。这三类防御机制不能相互替代。豹式有更多生命和更高正甲，但体积也较大，背甲仍为90。</p>
+<h3>主炮原始字段</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="05 装甲生存与主炮参数数据表，可横向滚动"><table><thead><tr>
+<th scope="col">主炮</th>
+<th scope="col">直接伤害</th>
+<th scope="col">近／中／远穿深</th>
+<th scope="col">最大射程</th>
+<th scope="col">装填时长</th>
+</tr></thead><tbody>
+<tr><td>谢尔曼75毫米常规弹</td><td>160</td><td>140／120／100</td><td>40</td><td>5.6至6.0秒</td></tr>
+<tr><td>四号75毫米</td><td>160</td><td>125／115／110</td><td>40</td><td>5.3至5.7秒</td></tr>
+<tr><td>豹式75毫米</td><td>160</td><td>260／240／220</td><td>50</td><td>5.2至5.6秒</td></tr>
+<tr><td>T-34/76主炮</td><td>160</td><td>120／100／80</td><td>40</td><td>6.1秒</td></tr>
+<tr><td>SU-85主炮</td><td>160</td><td>240／230／220</td><td>60</td><td>5.4秒</td></tr>
+</tbody></table></div>
+<p><strong>【演算】</strong>仅考虑160伤害的完整穿透，640生命需要4次，960生命需要6次。对于640生命目标，伤害提高到176仍需4次命中；提高至至少213.34才可在实数模型中实现3次击杀，实际字段取值需检查引擎舍入。</p>
+<p><strong>【结论】</strong>更高穿深改善每发转化为伤害的概率，更高伤害可能跨越击杀阈值，更长射程提供先手窗口。三种收益应分别衡量。</p>
+</section><section id="chapter-06">
+<h2>06 谢尔曼与四号的对射演算</h2>
+<h3>场景与单发结果</h3>
+<p><strong>【演算】</strong>双方静止、无老练、40距离、满生命，使用基础主炮。只计算精度命中后穿透的直接伤害，排除散布碰撞、范围伤害、修理、掩体和其他攻击者。</p>
+<p>两炮远距基础精度均为0.025。谢尔曼射击四号，命中率为0.025×20＝50%；四号射击谢尔曼，为0.025×21＝52.5%。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="06 谢尔曼与四号的对射演算数据表，可横向滚动"><table><thead><tr>
+<th scope="col">射击关系</th>
+<th scope="col">精度命中率</th>
+<th scope="col">穿透率</th>
+<th scope="col">每发有效伤害概率</th>
+<th scope="col">单发期望伤害</th>
+</tr></thead><tbody>
+<tr><td>谢尔曼→四号正甲</td><td>50%</td><td>55.56%</td><td>27.78%</td><td>44.44</td></tr>
+<tr><td>四号→谢尔曼正甲</td><td>52.5%</td><td>68.75%</td><td>36.09%</td><td>57.75</td></tr>
+<tr><td>谢尔曼→四号背甲</td><td>50%</td><td>100%</td><td>50%</td><td>80.00</td></tr>
+<tr><td>四号→谢尔曼背甲</td><td>52.5%</td><td>100%</td><td>52.5%</td><td>84.00</td></tr>
+</tbody></table></div>
+<p><strong>【结论】</strong>在此场景下，四号具有更高的单发正面有效伤害；谢尔曼转打四号背甲，单发期望伤害由44.44增至80，提升80%。这解释了侧击如何改变正面对射劣势，但不构成所有场景的单位排名。</p>
+<h3>预期发射数与时间代理</h3>
+<p>目标需要4次有效命中，若每发成功概率固定为p，则预期发射数为4÷p。若首发在0秒、后续每隔T秒开火，预期击杀时间为(4÷p−1)×T。该公式没有加入首次瞄准，也不描述同步对射的胜率。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="06 谢尔曼与四号的对射演算数据表，可横向滚动"><table><thead><tr>
+<th scope="col">射击关系</th>
+<th scope="col">预期发射数</th>
+<th scope="col">仅装填间隔T</th>
+<th scope="col">时间代理</th>
+</tr></thead><tbody>
+<tr><td>谢尔曼→四号正甲</td><td>14.40</td><td>5.8秒</td><td>77.72秒</td></tr>
+<tr><td>四号→谢尔曼正甲</td><td>11.08</td><td>5.5秒</td><td>55.45秒</td></tr>
+<tr><td>谢尔曼→四号背甲</td><td>8.00</td><td>5.8秒</td><td>40.60秒</td></tr>
+<tr><td>四号→谢尔曼背甲</td><td>7.62</td><td>5.5秒</td><td>36.40秒</td></tr>
+</tbody></table></div>
+<p><strong>【限制】</strong>T取装填区间的均值，只用于展示概率与节奏的关系。四号数据库页面的汇总“Reload”为5.75秒，而原始装填均值为5.5秒，说明网页汇总包含额外时序处理。上表不是游戏内实测TTK，也不应直接作为攻略中的击杀秒数。</p>
+</section><section id="chapter-07">
+<h2>07 射程穿深与收益饱和</h2>
+<h3>豹式正背甲对穿深价值的改变</h3>
+<p><strong>【演算】</strong>只比较穿透环节，使用T-34/76远距穿深80，对豹式正甲260的穿透率为30.77%，对背甲90为88.89%。不改变命中条件时，转打背甲将这一环节的成功率提高至约2.89倍。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="07 射程穿深与收益饱和数据表，可横向滚动"><table><thead><tr>
+<th scope="col">对豹式的穿深输入</th>
+<th scope="col">对260正甲穿透率</th>
+<th scope="col">对90背甲穿透率</th>
+</tr></thead><tbody>
+<tr><td>80</td><td>30.77%</td><td>88.89%</td></tr>
+<tr><td>100</td><td>38.46%</td><td>100%</td></tr>
+<tr><td>220</td><td>84.62%</td><td>100%</td></tr>
+<tr><td>260</td><td>100%</td><td>100%</td></tr>
+</tbody></table></div>
+<p><strong>【结论】</strong>穿深在低于装甲时近似线性提升穿透概率，达到装甲后收益饱和。把某炮穿深从220提高到240，对90背甲没有新增穿透收益，对260正甲则有约9.09%的相对穿透收益。</p>
+<h3>射程不只是DPS以外的附属属性</h3>
+<p>SU-85最大射程60，豹式50，样本中型坦克40；这些差异可能形成先手与无伤输出窗口。但样本基础视野均为35，满射程射击通常依赖额外视野、单位技能或友军侦察，不能把最大射程直接等同于独立发现距离。</p>
+<p><strong>【演算】</strong>理想直线接近时，SU-85对射程40目标的20距离优势，若目标已达速度6.3且SU-85静止，跨越该窗口约需20÷6.3＝3.17秒。该值排除了起步、转向、寻路和视野，只表示窗口量级，不能保证额外打出两炮。</p>
+<h3>移动射击的差异</h3>
+<p><strong>【原值】</strong>谢尔曼主炮移动精度乘数为0.75；本案其他四种主炮为0.5。上述四号目标上的50%静止精度命中率，谢尔曼移动后变为37.5%；四号攻击谢尔曼的52.5%则变为26.25%。这里只改变射手移动修正，实际接近同时会改变距离与装甲朝向。</p>
+<p><strong>【建议】</strong>坦克平衡应同时报告正面静止、移动追击、背甲侧击三种场景。只测固定距离木桩，会漏掉机动与操控能转换成的数值收益。</p>
+</section><section id="chapter-08">
+<h2>08 范围伤害与特殊机制</h2>
+<h3>爆炸伤害需要独立分析</h3>
+<p><strong>【原值】</strong>四号主炮爆炸半径2.5，近中远爆炸节点为0.75／1.25／1.875，对应伤害160／56／8。网页给出的80伤害距离约为1.13。</p>
+<p><strong>【演算】</strong>在0.75到1.25间按线性伤害衰减求80伤害交点：0.75＋(160−80)÷(160−56)×0.5＝1.1346，与网页显示相符。这是对插值理解的交叉核验，不代表圆内每名士兵都必然受到对应伤害。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="08 范围伤害与特殊机制数据表，可横向滚动"><table><thead><tr>
+<th scope="col">爆炸分析变量</th>
+<th scope="col">为什么影响结果</th>
+</tr></thead><tbody>
+<tr><td>落点与成员位置</td><td>决定每名成员距离爆心的距离</td></tr>
+<tr><td>队形密度</td><td>决定同一爆炸覆盖的成员数量</td></tr>
+<tr><td>伤害衰减曲线</td><td>决定致死区与擦伤区的面积</td></tr>
+<tr><td>掩体与特殊规则</td><td>可能改变伤害结算与有效受击</td></tr>
+<tr><td>散布与碰撞</td><td>改变落点分布和直接命中的机会</td></tr>
+</tbody></table></div>
+<p><strong>【结论】</strong>评价反步兵坦克炮，应统计平均减员、至少击杀一人的概率与整队损失概率，而不能只比较160点直击伤害。</p>
+<h3>条件伤害不能漏读</h3>
+<p><strong>【原值】</strong>M9巴祖卡基础伤害字段为26，效果字段含对非步兵目标额外54伤害；满足该条件时合计80。PIAT同类字段为33加67，条件满足时为100。只读取damage字段会严重低估其指定目标伤害；也不能把条件附加值无条件应用于所有目标。</p>
+<h3>压制与控制的间接产出</h3>
+<p>压制改变敌方移动、开火及位置选择，其价值可能体现为无法占点或无法接近，而不是击杀数。应另建压制积累、恢复、作用范围、架设时间与目标行为的模型；本案未核验完整压制常数，因此不填入推测值。</p>
+<h3>弹种与武器类别</h3>
+<p>谢尔曼高爆弹与常规弹是独立配置。高爆弹穿深为25，即便直接伤害字段同为160，也不能认为其反装甲与反步兵效率等同于常规弹。火焰、狙击与特殊弹药同样应分别处理，禁止套用本案步枪掩体表作为全局规则。</p>
+</section><section id="chapter-09">
+<h2>09 资源投入与时间经济</h2>
+<h3>多资源约束</h3>
+<p>人力、燃油、弹药、人口和时间承担不同约束。人力还用于补员；燃油限制技术与车辆节奏；弹药影响升级和技能使用；人口约束军队规模；单位撤退、修理与行军会减少可投入战场的时间。资源不能用未经验证的固定汇率随意相加。</p>
+<p><strong>【限制】</strong>本次公开字段核验未完成所有单位的购买、补员、维护与科技成本。因此本章给出可填充模型，不将常见攻略中的价格冒充同补丁原值。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="09 资源投入与时间经济数据表，可横向滚动"><table><thead><tr>
+<th scope="col">核算项目</th>
+<th scope="col">计算方式</th>
+<th scope="col">必须补齐的数据</th>
+</tr></thead><tbody>
+<tr><td>补员消耗</td><td>各类死亡人数×对应补员单价之和</td><td>模型价格、补员规则</td></tr>
+<tr><td>技术总投入</td><td>前置建筑＋科技＋首个单位成本</td><td>阵营技术路线与时间</td></tr>
+<tr><td>有效在场率</td><td>可执行任务时间÷观察总时间</td><td>行军、撤退、修理记录</td></tr>
+<tr><td>单位损失率</td><td>被彻底摧毁数量÷投入数量</td><td>全损与可补员损失分离</td></tr>
+<tr><td>资源点机会损失</td><td>被剥夺收入率×持续时间</td><td>地图点位与收入规则</td></tr>
+</tbody></table></div>
+<h3>在场率如何改变输出</h3>
+<p><strong>【演算 假设例】</strong>两个单位在接敌时都有10点期望每秒伤害，A在60秒观察期内战斗45秒，B仅战斗30秒，则累计输出代理为450与300。A提高50%，原因是可投入时间，而非武器面板更强。例中数字仅用于展示模型，不对应某个实际单位。</p>
+<h3>补员与保存单位</h3>
+<p>一次撤退会付出行军时间和地图控制代价，但可能保留整队经验与升级。全损则同时损失已有投入，并需要重新生产；因此玩家追求的不总是最少承伤，而是避免昂贵且不可逆的全损。</p>
+<p><strong>【建议】</strong>评估单位时同时报告人力流失、燃油全损、在场率和占点贡献。坦克修理期间没有补员支出，也不等于没有经济成本：维修单位被占用，前线力量暂时减少，对手可能趁机取得资源。</p>
+<h3>地图控制的反馈</h3>
+<p>赢得交火→保留兵力→占据资源→更早获得科技或单位→提高下一轮交火能力。撤退机制、修理成本、视野限制与侧击机会共同决定这一反馈是否形成无法逆转的滚雪球。需通过完整对局数据检验，不能仅从单兵DPS推断。</p>
+</section><section id="chapter-10">
+<h2>10 老练成长与平衡设计</h2>
+<h3>避免重复应用成长</h3>
+<p>数据库可能同时包含基础与老练武器条目。分析时只能选一种方式：使用基础值逐项乘修正，或直接使用已加工的老练值；不能先读取老练精度，再乘一次同一老练增益。</p>
+<p><strong>【演算 假设例】</strong>精度提高20%、有效开火周期缩短20%，且命中未封顶，则持续输出代理为1.2÷0.8＝1.5，即提高50%，不是简单相加得到40%。该例为说明乘法叠加，不代表任何单位的实际老练奖励。</p>
+<h3>调整优先级与副作用</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="10 老练成长与平衡设计数据表，可横向滚动"><table><thead><tr>
+<th scope="col">调整项</th>
+<th scope="col">直接效果</th>
+<th scope="col">需要同时检查</th>
+</tr></thead><tbody>
+<tr><td>精度</td><td>改变有效命中概率</td><td>体积、掩体与命中封顶</td></tr>
+<tr><td>每发伤害</td><td>改变伤害及击杀阈值</td><td>齐射爆发、过量伤害</td></tr>
+<tr><td>冷却或装填</td><td>改变输出节奏</td><td>首发优势、追击与撤离窗口</td></tr>
+<tr><td>穿深</td><td>改变反甲成功率</td><td>对低甲目标是否已饱和</td></tr>
+<tr><td>目标体积</td><td>改变被命中概率</td><td>对范围伤害不一定有效</td></tr>
+<tr><td>射程</td><td>改变先手与交换窗口</td><td>视野、地图宽度与机动</td></tr>
+<tr><td>补员价格</td><td>改变长期消耗</td><td>短期战斗力可能完全不变</td></tr>
+</tbody></table></div>
+<h3>三个可验证的设计假设</h3>
+<p><strong>【建议】</strong>假设一：若某步兵只在远距过强，优先调整远距精度或远距时间倍率，而非全面降低伤害。这样可保留近距定位；验证时需检查所有距离段，而非只看35距离。</p>
+<p><strong>【建议】</strong>假设二：若坦克对高甲目标过弱、对轻甲表现合理，可调整穿深而非统一增加伤害。应验证高甲穿透改善幅度，并确认低甲端已饱和而未受额外影响。</p>
+<p><strong>【建议】</strong>假设三：若单位初次交火合理但长局压制明显，可先查补员成本、修理效率与在场率。直接削减DPS可能破坏原本合理的战斗角色。</p>
+<p>这些是假设驱动的调参方向，不是本案已证实需要上线的平衡补丁。没有真实对局样本，不能认定某阵营整体过强或过弱。</p>
+</section><section id="chapter-11">
+<h2>11 验证矩阵与验收方法</h2>
+<h3>由静态核对走向受控实测</h3>
+<p>第一步核对同补丁字段、武器配置和状态；第二步做固定距离单发试验；第三步验证射击节奏与整队减员；最后进入带资源与地图的对局。每一步分别排除变量，避免用一场随机对战解释多个机制。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="11 验证矩阵与验收方法数据表，可横向滚动"><table><thead><tr>
+<th scope="col">试验</th>
+<th scope="col">固定条件</th>
+<th scope="col">输出指标</th>
+</tr></thead><tbody>
+<tr><td>单发精度</td><td>固定武器、目标、距离、姿态</td><td>命中率与置信区间</td></tr>
+<tr><td>正背甲</td><td>同一攻击者与距离，仅换朝向</td><td>穿透率、弹射比例</td></tr>
+<tr><td>掩体收益</td><td>同一射界与队形，替换掩体状态</td><td>每发伤害与减员时间</td></tr>
+<tr><td>开火节奏</td><td>静止、无干扰、记录连续开火</td><td>首发延迟、平均发射间隔</td></tr>
+<tr><td>小队交火</td><td>满编无老练，重复固定配置</td><td>首次减员、存活数、胜率</td></tr>
+<tr><td>范围伤害</td><td>多组固定成员站位</td><td>减员分布与整队损失率</td></tr>
+<tr><td>完整对局</td><td>地图、玩家水平和出生点分层</td><td>全损、资源流失、胜率</td></tr>
+</tbody></table></div>
+<h3>样本量与误差</h3>
+<p><strong>【演算】</strong>对接近50%的独立二项事件，约400次试验的95%正态近似误差为±4.9个百分点；约2500次为±2个百分点。该近似只用于规划样本量，正式报告可用Wilson区间，极端概率或少量样本不应机械使用正态区间。</p>
+<p>同一段连射、同一爆炸中的多个目标并不必然相互独立。整队胜率应以一次完整交火为一个样本，不能把所有子弹都当成独立胜负数据。</p>
+<h3>记录字段</h3>
+<p>每条测试记录保存补丁、单位内部ID、武器ID、老练、升级、距离、掩体方向、移动状态、装甲受击面、随机种子或录像标识、发射时间、命中、穿透、伤害与死亡事件。遇到散布碰撞时，单独标记，避免拿完整命中率直接否定精度通道公式。</p>
+<h3>本案已完成与待完成</h3>
+<p><strong>【已完成】</strong>公开数据基线核验；代表单位和武器抽取；静态公式复算；四号页面与原始字段交叉核对；文档结构校验。</p>
+<p><strong>【待完成】</strong>本地同补丁数据比对；真实射击周期、散布碰撞与压制试验；成本与科技链补全；带地图和玩家水平分层的平衡验证。交付中的推导不替代这些实测工作。</p>
+</section><section id="chapter-12">
+<h2>12 来源与复算附录</h2>
+<h3>主要来源</h3>
+<p>S1　Serealia CoH2 Stats，<a href="https://coh2.serealia.ca/">https://coh2.serealia.ca/</a> 。用于代表单位的生命、体积、装甲、移动、人口与武器字段；本案于2026年11月11日读取公开页面及其数据数组。</p>
+<p>S2　数据库更新日志，<a href="https://coh2.serealia.ca/changelog.txt">https://coh2.serealia.ca/changelog.txt</a> 。5/4/24条目声明更新至2021年9月9日4.0.0.24250补丁，5/9/24条目增加Luftwaffe Field Officer。检索日期不等于游戏平衡发布日期。</p>
+<p>S3　Steam产品页，<a href="https://store.steampowered.com/app/231430/Company_of_Heroes_2/">https://store.steampowered.com/app/231430/Company_of_Heroes_2/</a> 。仅用于作品名称与产品背景，不用于数值取证。</p>
+<p>数据为第三方公开整理结果，本案没有直接读取本地同版本游戏资源。若后续与游戏数据冲突，应先核对补丁、阵营分支、武器变体和老练状态，再修订结论。</p>
+<h3>关键武器标识</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="12 来源与复算附录数据表，可横向滚动"><table><thead><tr>
+<th scope="col">本案名称</th>
+<th scope="col">数据库武器ID</th>
+</tr></thead><tbody>
+<tr><td>M1加兰德</td><td>m1_garand_rifle_rifleman_mp</td></tr>
+<tr><td>掷弹兵Kar98k</td><td>grenadier_kar_98k_rifle_mp</td></tr>
+<tr><td>动员兵莫辛纳甘</td><td>mosin_nagant_rifle_conscript_mp</td></tr>
+<tr><td>国民掷弹兵Kar98k</td><td>volksgrenadier_kar_98k_rifle_mp</td></tr>
+<tr><td>李恩菲尔德</td><td>tommy_lee_enfield_rifle_mp</td></tr>
+<tr><td>谢尔曼常规弹主炮</td><td>sherman_m3_75mm_mp</td></tr>
+<tr><td>四号主炮</td><td>panzer_4_75mm_mp</td></tr>
+<tr><td>豹式主炮</td><td>panther_75mm_mp</td></tr>
+<tr><td>T-34/76主炮</td><td>t34_76mm_mp</td></tr>
+<tr><td>SU-85主炮</td><td>su85_d5t_85mm__mp</td></tr>
+</tbody></table></div>
+<h3>复算顺序</h3>
+<p>先确定实际配置→选择距离节点→乘目标体积和有效精度修正→限制概率上限→按受击面求穿透率→乘伤害与条件修正→加入时间与减员。带爆炸、散布或特殊效果时，另开分支，不能硬塞入同一个单发直接伤害公式。</p>
+<p>本文结果一般保留两位小数，计算过程使用未舍入值。640生命四次穿透的例子，采用固定160伤害；概率模型要求每次试验条件不变，目标移动、维修和装甲朝向变化均需重新计算。</p>
+<p><strong>【设计总结】</strong>《英雄连2》的数值深度来自多个可被操作改变的条件共同作用。策划分析应把“为什么赢”拆成命中条件、穿透条件、射击节奏、减员过程与资源时间收益，再讨论单个单位是否需要调整。</p>
+</section><section id="download"><h2>完整文档下载</h2><div class="download-box"><p>Word文档包含12章、17张表，涵盖五阵营基础步兵、五种装甲单位、掩体与移动修正、正背甲对射、经济分析及平衡验证方法。</p><div class="case-actions"><a class="button" href="assets/company-of-heroes-2-breakdown.docx" download="英雄连2_数值拆解案.docx">下载 Word 文档 <span>↓</span></a><button class="copy-button" data-copy-link>复制项目链接</button></div><div class="status" role="status" aria-live="polite"></div></div><p class="note">数据基于第三方数据库注明的2021年9月9日补丁，检索日期不代表最新平衡版本。文中已区分原值、演算和建议；尚未进行本地实战验证。Word已完成结构与关键计算检查，尚未完成逐页渲染检查。</p><p>游戏名称、商标及原始内容归各自权利人所有。本项目用于独立研究与策划展示，与原作开发商及发行商无隶属关系。</p><a class="text-link" href="index.html#work">浏览全部作品 <span>→</span></a></section></article></div></main><footer class="wrap footer"><a class="brand footer-brand" href="./" aria-label="Gycccc 作品集首页">Gycccc</a><p><a href="https://github.com/gyc-05/gyc-05.github.io" aria-label="查看 Gycccc 的网站 GitHub 仓库">GitHub ↗</a></p><a href="#main">回到顶部 ↑</a></footer>
+</body></html>
