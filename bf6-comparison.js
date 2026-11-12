@@ -29,6 +29,17 @@
           const cell = document.createElement(i === 0 ? 'th' : 'td');
           if (i === 0) cell.scope = 'row';
           cell.textContent = String(value);
+          if (i === 0 && weapon.image) {
+            const image = document.createElement('img');
+            image.className = 'weapon-table-image';
+            image.src = weapon.image;
+            image.alt = '';
+            image.width = 112;
+            image.height = 56;
+            image.loading = 'lazy';
+            image.decoding = 'async';
+            cell.append(image);
+          }
           row.append(cell);
         });
         body.append(row);
