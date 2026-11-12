@@ -22,3 +22,17 @@ if (share) share.addEventListener('click', async () => {
     status.textContent = '当前浏览器无法自动复制，请从地址栏复制项目链接。';
   }
 });
+
+const gameFilters = document.querySelectorAll('[data-game-filter]');
+const gameEntries = document.querySelectorAll('[data-game-category]');
+const gameResults = document.querySelector('.game-results');
+gameFilters.forEach(button => button.addEventListener('click', () => {
+  const category = button.dataset.gameFilter;
+  gameFilters.forEach(filter => filter.setAttribute('aria-pressed', String(filter === button)));
+  let count = 0;
+  gameEntries.forEach(entry => {
+    entry.hidden = category !== 'all' && entry.dataset.gameCategory !== category;
+    if (!entry.hidden) count++;
+  });
+  if (gameResults) gameResults.textContent = category === 'all' ? `显示全部 ${count} 款游戏` : `显示${button.textContent.replace(/\s*\d+$/, '')} · ${count} 款游戏`;
+}));
